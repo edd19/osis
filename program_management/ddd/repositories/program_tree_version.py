@@ -26,6 +26,7 @@
 from typing import Optional, List
 
 from django.db.models import F
+from django.db.models import Q
 
 from base.models.education_group_year import EducationGroupYear
 from education_group.models.group_year import GroupYear
@@ -36,7 +37,6 @@ from program_management.ddd.domain.program_tree_version import ProgramTreeVersio
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
 from program_management.ddd.repositories.program_tree import ProgramTreeRepository
 from program_management.models.education_group_version import EducationGroupVersion
-from django.db.models import Q
 
 
 class ProgramTreeVersionRepository(interface.AbstractRepository):
@@ -82,7 +82,7 @@ class ProgramTreeVersionRepository(interface.AbstractRepository):
             offer__acronym=entity_id.offer_acronym,
             offer__academic_year__year=entity_id.year,
             is_transition=entity_id.is_transition,
-        ).annotate(
+        ).select_related('root_group', 'offer').annotate(
             code=F('root_group__partial_acronym'),
             offer_acronym=F('offer__acronym'),
             offer_year=F('offer__academic_year__year'),

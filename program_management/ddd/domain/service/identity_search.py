@@ -27,14 +27,14 @@ from typing import Union
 
 from django.db.models import F
 
+from education_group.ddd.domain.service.identity_search import TrainingIdentitySearch \
+    as EducationGroupTrainingIdentitySearch
 from education_group.ddd.domain.training import TrainingIdentity
 from education_group.models.group_year import GroupYear
 from osis_common.ddd import interface
 from program_management.ddd.domain.node import NodeIdentity
 from program_management.ddd.domain.program_tree import ProgramTreeIdentity
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
-from education_group.ddd.domain.service.identity_search import TrainingIdentitySearch \
-    as EducationGroupTrainingIdentitySearch
 
 
 class ProgramTreeVersionIdentitySearch(interface.DomainService):
@@ -42,7 +42,7 @@ class ProgramTreeVersionIdentitySearch(interface.DomainService):
         values = GroupYear.objects.filter(
             partial_acronym=node_identity.code,
             academic_year__year=node_identity.year
-        ).annotate(
+        ).select_related('educationgroupversion', 'academic_year').annotate(
             offer_acronym=F('educationgroupversion__offer__acronym'),
             year=F('academic_year__year'),
             version_name=F('educationgroupversion__version_name'),
