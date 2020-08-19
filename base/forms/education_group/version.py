@@ -57,11 +57,15 @@ class SpecificVersionForm(forms.Form):
         label=_('This version exists until'),
     )
 
-    def __init__(self, training_identity: 'TrainingIdentity', *args, **kwargs):
+    def __init__(self, training_identity: 'TrainingIdentity', instance=None, last_year=None, *args, **kwargs):
         self.training_identity = training_identity
         super().__init__(*args, **kwargs)
-
         self.__init_academic_year_choices()
+        if instance:
+            self.fields['end_year'].initial = last_year
+            self.fields['version_name'].initial = instance.version_name
+            self.fields['title'].initial = instance.title_fr
+            self.fields['title_english'].initial = instance.title_en
 
     def __init_academic_year_choices(self):
         max_year = academic_year.find_academic_year_by_year(compute_max_academic_year_adjournment() + 1).year

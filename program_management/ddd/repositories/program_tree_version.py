@@ -131,6 +131,27 @@ class ProgramTreeVersionRepository(interface.AbstractRepository):
             return cls.get(entity_id=last_identity)
 
     @classmethod
+    def get_last(cls, entity_id: ProgramTreeVersionIdentity) -> 'ProgramTreeVersion':
+        qs = EducationGroupVersion.objects.filter(
+            version_name=entity_id.version_name,
+            offer__acronym=entity_id.offer_acronym,
+        ).order_by(
+            'offer__academic_year'
+        ).values_list(
+            'offer__academic_year__year',
+            flat=True,
+        )
+        if qs:
+            last_past_year = qs.last()
+            last_identity = ProgramTreeVersionIdentity(
+                offer_acronym=entity_id.offer_acronym,
+                year=last_past_year,
+                version_name=entity_id.version_name,
+                is_transition=entity_id.is_transition,
+            )
+            return cls.get(entity_id=last_identity)
+
+    @classmethod
     def search(
             cls,
             entity_ids: Optional[List['ProgramTreeVersionIdentity']] = None,

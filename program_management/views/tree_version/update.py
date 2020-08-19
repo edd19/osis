@@ -39,17 +39,18 @@ from education_group.ddd.domain.service.identity_search import TrainingIdentityS
 from education_group.ddd.domain.training import TrainingIdentity
 from education_group.templatetags.academic_year_display import display_as_academic_year
 from osis_role.contrib.views import AjaxPermissionRequiredMixin
-from program_management.ddd.business_types import *
 from program_management.ddd.command import CreateProgramTreeVersionCommand
+from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
 from program_management.ddd.domain.node import NodeIdentity
+from program_management.ddd.repositories.program_tree_version import ProgramTreeVersionRepository
 from program_management.ddd.service.write import create_and_postpone_tree_version_service, \
     create_program_tree_version_service
 
 
-class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, View):
-    template_name = "tree_version/create_specific_version_inner.html"
+class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, View):
+    template_name = "tree_version/update_specific_version_inner.html"
     form_class = SpecificVersionForm
-    permission_required = 'base.add_programtreeversion'
+    permission_required = 'base.can_edit_programtreeversion'
 
     @cached_property
     def node_identity(self) -> 'NodeIdentity':
@@ -58,6 +59,14 @@ class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
     @cached_property
     def training_identity(self) -> 'TrainingIdentity':
         return TrainingIdentitySearch().get_from_node_identity(self.node_identity)
+
+    @cached_property
+    def program_tree_version_identity(self) -> ProgramTreeVersionIdentity:
+        return ProgramTreeVersionIdentity(
+            offer_acronym=self.training_identity.acronym,
+            year=self.kwargs['year'],
+            version_name=self.kwargs['version_name'],
+            is_transition=False)
 
     @cached_property
     def person(self):
@@ -73,7 +82,9 @@ class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
 
     def get(self, request, *args, **kwargs):
         form = SpecificVersionForm(
-            training_identity=self.training_identity
+            training_identity=self.training_identity,
+            instance=ProgramTreeVersionRepository.get(self.program_tree_version_identity),
+            last_year=ProgramTreeVersionRepository.get_last(self.program_tree_version_identity).entity_identity.year
         )
         return render(request, self.template_name, self.get_context_data(form))
 
@@ -121,7 +132,7 @@ class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
             success_messages.append(
                 _(
                     "Specific version for education group year %(offer_acronym)s[%(acronym)s] (%(academic_year)s) "
-                    "successfully created."
+                    "successfully updated."
                 ) % {
                     "offer_acronym": created_identity.offer_acronym,
                     "acronym": created_identity.version_name,

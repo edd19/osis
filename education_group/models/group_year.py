@@ -211,3 +211,7 @@ class GroupYear(models.Model):
         return entity_version.find_entity_version_according_academic_year(
             self.management_entity, self.academic_year
         )
+
+    @property
+    def is_specific_version(self):
+        return self.educationgroupversion.version_name != ""

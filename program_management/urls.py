@@ -33,6 +33,7 @@ from program_management.views.proxy.identification import IdentificationRedirect
 from program_management.views import groupelementyear_update, \
     groupelementyear_read, element_utilization, excel, search, tree, prerequisite_read, prerequisite_update
 from program_management.views.tree_version import create as create_program_tree_version
+from program_management.views.tree_version import update as update_program_tree_version
 
 
 urlpatterns = [
@@ -115,6 +116,11 @@ urlpatterns = [
             'create_education_group_version/',
             create_program_tree_version.CreateProgramTreeVersion.as_view(),
             name="create_education_group_version"
+        ),
+        path(
+            '<str:version_name>/update_education_group_version/',
+            update_program_tree_version.UpdateProgramTreeVersion.as_view(),
+            name="update_education_group_version"
         ),
         path(
             'check_version_name/',
