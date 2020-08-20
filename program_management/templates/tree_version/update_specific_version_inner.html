@@ -56,10 +56,19 @@
                 <button id="cancel_button" type="button" class="btn btn-default" data-dismiss="modal">
                     {% trans "Cancel" %}
                 </button>
-                <button type="submit" class="btn btn-primary no_spinner" title="{% trans 'Save' %}">
-                    {% trans 'Save' %}
-                </button>
+                {% if is_a_master %}
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalConfirmation">
+                        <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save' %}
+                    </button>
+                {% else %}
+                    <button onclick="submit()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save' %}
+                    </button>
+                {% endif %}
             </div>
         </div>
+        {% if is_a_master %}
+            {% include "./modal_modification_confirmation.html" %}
+        {% endif %}
     </form>
 </div>

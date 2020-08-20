@@ -33,10 +33,12 @@ from django.views.generic.base import View
 
 from base.forms.education_group.version import SpecificVersionForm
 from base.models.education_group_year import EducationGroupYear
+from base.models.enums.education_group_types import TrainingType
 from base.views.common import display_success_messages
 from base.views.mixins import AjaxTemplateMixin
 from education_group.ddd.domain.service.identity_search import TrainingIdentitySearch
 from education_group.ddd.domain.training import TrainingIdentity
+from education_group.models.group_year import GroupYear
 from education_group.templatetags.academic_year_display import display_as_academic_year
 from osis_role.contrib.views import AjaxPermissionRequiredMixin
 from program_management.ddd.command import CreateProgramTreeVersionCommand
@@ -45,6 +47,7 @@ from program_management.ddd.domain.node import NodeIdentity
 from program_management.ddd.repositories.program_tree_version import ProgramTreeVersionRepository
 from program_management.ddd.service.write import create_and_postpone_tree_version_service, \
     create_program_tree_version_service
+from program_management.models.education_group_version import EducationGroupVersion
 
 
 class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, View):
@@ -74,16 +77,20 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
 
     @cached_property
     def education_group_year(self):
+        return self.education_group_version.offer
+
+    @cached_property
+    def education_group_version(self):
         return get_object_or_404(
-            EducationGroupYear,
-            academic_year__year=self.kwargs['year'],
-            acronym=self.kwargs['code'],
+            EducationGroupVersion,
+            root_group__academic_year__year=self.kwargs['year'],
+            root_group__partial_acronym=self.kwargs['code'],
         )
 
     def get(self, request, *args, **kwargs):
         form = SpecificVersionForm(
             training_identity=self.training_identity,
-            instance=ProgramTreeVersionRepository.get(self.program_tree_version_identity),
+            program_tree_version=ProgramTreeVersionRepository.get(self.program_tree_version_identity),
             last_year=ProgramTreeVersionRepository.get_last(self.program_tree_version_identity).entity_identity.year
         )
         return render(request, self.template_name, self.get_context_data(form))
@@ -115,6 +122,8 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
             'training_identity': self.training_identity,
             'node_identity': self.node_identity,
             'form': form,
+            'is_a_master':
+                self.education_group_version.root_group.education_group_type.name in TrainingType.root_master_2m_types()
         }
 
     def get_success_url(self):
