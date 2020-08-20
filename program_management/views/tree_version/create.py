@@ -71,8 +71,8 @@ class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
     def education_group_year(self):
         return get_object_or_404(
             EducationGroupYear,
-            academic_year__year=self.kwargs['year'],
-            acronym=self.kwargs['code'],
+            academic_year__year=self.training_identity.year,
+            acronym=self.training_identity.acronym,
         )
 
     def get(self, request, *args, **kwargs):
