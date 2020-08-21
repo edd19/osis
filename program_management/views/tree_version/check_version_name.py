@@ -30,10 +30,14 @@ def check_version_name(request, year, code):
 
 
 def check_existing_version(version_name: str, year: int, code: str) -> bool:
+    group_year = GroupYear.objects.get(
+        academic_year__year=year,
+        partial_acronym=code,
+    )
     return EducationGroupVersion.objects.filter(
         version_name=version_name.upper(),
         root_group__academic_year__year=year,
-        root_group__partial_acronym=code
+        root_group__acronym=group_year.acronym
     ).exists()
 
 
