@@ -32,21 +32,16 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import View
 
 from base.forms.education_group.version import SpecificVersionForm
-from base.models.education_group_year import EducationGroupYear
 from base.models.enums.education_group_types import TrainingType
 from base.views.common import display_success_messages
 from base.views.mixins import AjaxTemplateMixin
 from education_group.ddd.domain.service.identity_search import TrainingIdentitySearch
 from education_group.ddd.domain.training import TrainingIdentity
-from education_group.models.group_year import GroupYear
 from education_group.templatetags.academic_year_display import display_as_academic_year
 from osis_role.contrib.views import AjaxPermissionRequiredMixin
-from program_management.ddd.command import CreateProgramTreeVersionCommand
-from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
 from program_management.ddd.domain.node import NodeIdentity
+from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
 from program_management.ddd.repositories.program_tree_version import ProgramTreeVersionRepository
-from program_management.ddd.service.write import create_and_postpone_tree_version_service, \
-    create_program_tree_version_service
 from program_management.models.education_group_version import EducationGroupVersion
 
 
@@ -101,17 +96,7 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
             training_identity=self.training_identity
         )
         if form.is_valid():
-            command = _convert_form_to_command(form)
-            save_type = self.request.POST.get("save_type")
-
-            identities = []
-            if save_type == "new_version":
-                identities = create_and_postpone_tree_version_service.create_and_postpone(command=command)
-            elif save_type == "extend":
-                identities = create_program_tree_version_service.create_and_postpone_from_past_version(command=command)
-
-            self._display_success_messages(identities)
-
+            pass
         return render(request, self.template_name, self.get_context_data(form))
 
     def _call_rule(self, rule):
@@ -122,8 +107,6 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
             'training_identity': self.training_identity,
             'node_identity': self.node_identity,
             'form': form,
-            'is_a_master':
-                self.education_group_version.root_group.education_group_type.name in TrainingType.root_master_2m_types()
         }
 
     def get_success_url(self):
@@ -149,15 +132,3 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
                 }
             )
         display_success_messages(self.request, success_messages, extra_tags='safe')
-
-
-def _convert_form_to_command(form: SpecificVersionForm) -> CreateProgramTreeVersionCommand:
-    return CreateProgramTreeVersionCommand(
-        offer_acronym=form.training_identity.acronym,
-        version_name=form.cleaned_data.get("version_name").upper(),
-        year=form.training_identity.year,
-        is_transition=False,
-        title_en=form.cleaned_data.get("title_english"),
-        title_fr=form.cleaned_data.get("title"),
-        end_year=form.cleaned_data.get("end_year"),
-    )

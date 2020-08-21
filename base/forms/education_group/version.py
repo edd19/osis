@@ -57,7 +57,14 @@ class SpecificVersionForm(forms.Form):
         label=_('This version exists until'),
     )
 
-    def __init__(self, training_identity: 'TrainingIdentity', program_tree_version=None, last_year=None, *args, **kwargs):
+    def __init__(
+            self,
+            training_identity: 'TrainingIdentity',
+            program_tree_version=None,
+            last_year=None,
+            *args,
+            **kwargs
+    ):
         self.training_identity = training_identity
         super().__init__(*args, **kwargs)
         self.__init_academic_year_choices()

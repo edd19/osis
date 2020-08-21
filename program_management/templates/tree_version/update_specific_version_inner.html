@@ -24,7 +24,7 @@
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
 <div class="modal-content">
-    <form class="form" method="POST" id="SpecificVersionForm" data-validate-url="{% url 'check_version_name' node_identity.year node_identity.code %}"
+    <form class="form" method="POST" id="SpecificVersionForm" data-validate-url="{% url 'check_update_version_name' node_identity.year node_identity.code form.version_name.value %}"
     action="{{ request.path }}">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
@@ -50,25 +50,42 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" id="save_type" name="save_type">
-        <div id="valid_footer">
+        <div id="2m_footer" style="display: none">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    {% trans "Cancel" %}
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalConfirmation">
+                <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save 2m' %}
+            </button>
+            </div>
+        </div>
+        <div id="default_footer" style="display: block">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    {% trans "Cancel" %}
+                </button>
+                <button onclick="submit()" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save' %}
+                </button>
+            </div>
+        </div>
+        <div id="invalid_footer" style="display: none">
             <div class="modal-footer">
                 <button id="cancel_button" type="button" class="btn btn-default" data-dismiss="modal">
                     {% trans "Cancel" %}
                 </button>
-                {% if is_a_master %}
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalConfirmation">
-                        <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save' %}
-                    </button>
-                {% else %}
-                    <button onclick="submit()" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save' %}
-                    </button>
-                {% endif %}
             </div>
         </div>
-        {% if is_a_master %}
+        <div class="modal-footer">
+            <button id="2m_button" style="display: none" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalConfirmation">
+                <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save 2m' %}
+            </button>
             {% include "./modal_modification_confirmation.html" %}
-        {% endif %}
+        </div>
     </form>
 </div>
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/program_management/update_education_group_version.js' %}"></script>
+{% endblock %}
+

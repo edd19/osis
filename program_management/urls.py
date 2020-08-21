@@ -129,5 +129,10 @@ urlpatterns = [
             program_management.views.tree_version.check_version_name.check_version_name,
             name="check_version_name"
         ),
+        path(
+            '<str:default_version_name>/check_update_version_name/',
+            program_management.views.tree_version.check_version_name.check_update_version_name,
+            name="check_update_version_name"
+        ),
     ])),
 ]
