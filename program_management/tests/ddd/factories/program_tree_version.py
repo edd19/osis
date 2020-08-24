@@ -58,6 +58,9 @@ class ProgramTreeVersionFactory(factory.Factory):
         version_name="",
         is_transition=False
     )
+    version_name = factory.Sequence(lambda n: 'Version%02d' % n)
+    title_fr = factory.Sequence(lambda n: 'Title French %02d' % n)
+    title_en = factory.Sequence(lambda n: 'Title English %02d' % n)
 
     @staticmethod
     def produce_standard_2M_program_tree(current_year: int, end_year: int) -> 'ProgramTreeVersion':
