@@ -30,7 +30,6 @@ from base.tests.factories.authorized_relationship import AuthorizedRelationshipF
 from base.tests.factories.campus import CampusFactory
 from base.tests.factories.education_group_type import EducationGroupTypeFactory
 from base.tests.factories.entity_version import EntityVersionFactory
-from education_group.tests.ddd.factories.command.create_training_command import CreateTrainingCommandFactory
 from program_management.ddd.command import CreateProgramTreeVersionCommand
 from program_management.ddd.domain.exception import ProgramTreeVersionNotFoundException
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity, STANDARD
@@ -38,6 +37,8 @@ from program_management.ddd.repositories.program_tree_version import ProgramTree
 from program_management.ddd.service.write import create_program_tree_version_service
 from program_management.ddd.service.write.create_training_with_program_tree import \
     create_and_report_training_with_program_tree
+from education_group.tests.ddd.factories.command.create_and_postpone_training_and_tree_command import \
+    CreateAndPostponeTrainingAndProgramTreeCommandFactory
 from program_management.tests.ddd.factories.program_tree_version import ProgramTreeVersionFactory
 from reference.tests.factories.language import LanguageFactory
 from testing.mocks import MockPatcherMixin
@@ -63,22 +64,19 @@ class TestCreateProgramTreeVersion(TestCase, MockPatcherMixin):
         )
 
     def _create_standard_version(self):
-        cmd = CreateTrainingCommandFactory(
+        cmd = CreateAndPostponeTrainingAndProgramTreeCommandFactory(
             abbreviated_title=self.offer_acronym,
             year=self.current_year,
             code='LDROI200M',
+            type=TrainingType.PGRM_MASTER_120.name
         )
 
         # TODO :: mock with fake repository
-        EducationGroupTypeFactory(name=cmd.type)
-        EducationGroupTypeFactory(name=cmd.type)
-        EducationGroupTypeFactory(name=cmd.type)
-        EducationGroupTypeFactory(name=cmd.type)
         EntityVersionFactory(acronym=cmd.management_entity_acronym)
         CampusFactory(name=cmd.teaching_campus_name, organization__name=cmd.teaching_campus_organization_name)
         LanguageFactory(name=cmd.main_language)
         AcademicYearFactory.produce_in_future(cmd.year)
-        root_type = EducationGroupTypeFactory(name=TrainingType.PGRM_MASTER_120.name)
+        root_type = EducationGroupTypeFactory(name=cmd.type)
         AuthorizedRelationshipFactory(parent_type=root_type, child_type=EducationGroupTypeFactory(name=GroupType.COMMON_CORE.name))
         AuthorizedRelationshipFactory(parent_type=root_type, child_type=EducationGroupTypeFactory(name=GroupType.FINALITY_120_LIST_CHOICE.name))
         AuthorizedRelationshipFactory(parent_type=root_type, child_type=EducationGroupTypeFactory(name=GroupType.OPTION_LIST_CHOICE.name))
