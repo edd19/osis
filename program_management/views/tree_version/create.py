@@ -33,8 +33,10 @@ from django.views.generic.base import View
 
 from base.forms.education_group.version import SpecificVersionForm
 from base.models.education_group_year import EducationGroupYear
+from base.models.utils.utils import ChoiceEnum
 from base.views.common import display_success_messages
 from base.views.mixins import AjaxTemplateMixin
+from education_group.ddd.domain import exception
 from education_group.ddd.domain.service.identity_search import TrainingIdentitySearch
 from education_group.ddd.domain.training import TrainingIdentity
 from education_group.templatetags.academic_year_display import display_as_academic_year
@@ -47,6 +49,11 @@ from program_management.ddd.domain.service.identity_search import NodeIdentitySe
 from program_management.ddd.service.write import create_and_postpone_tree_version_service, \
     extend_existing_tree_version_service, update_program_tree_version_service, \
     postpone_tree_version_service
+
+
+class CreateProgramTreeVersionType(ChoiceEnum):
+    NEW_VERSION = "new_version"
+    EXTEND = "extend"
 
 
 class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, View):
@@ -90,9 +97,12 @@ class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
             save_type = self.request.POST.get("save_type")
 
             identities = []
-            if save_type == "new_version":
-                identities = create_and_postpone_tree_version_service.create_and_postpone(command=command)
-            elif save_type == "extend":
+            if save_type == CreateProgramTreeVersionType.NEW_VERSION.value:
+                try:
+                    identities = create_and_postpone_tree_version_service.create_and_postpone(command=command)
+                except exception.VersionNameAlreadyExist as e:
+                    form.add_error('version_name', e.message)
+            elif save_type == CreateProgramTreeVersionType.EXTEND.value:
                 identities = extend_existing_tree_version_service.extend_existing_past_version(
                     _convert_form_to_extend_command(form)
                 )
@@ -103,7 +113,8 @@ class CreateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
                     _convert_form_to_postpone_command(form, self.node_identity)
                 )
 
-            self._display_success_messages(identities)
+            if not form.errors:
+                self._display_success_messages(identities)
 
         return render(request, self.template_name, self.get_context_data(form))
 

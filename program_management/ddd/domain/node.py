@@ -80,8 +80,6 @@ class NodeFactory:
 
     def get_node(self, type: NodeType, **node_attrs) -> 'Node':
         node_cls = {
-            NodeType.EDUCATION_GROUP: NodeEducationGroupYear,   # TODO: Remove when migration is done
-
             NodeType.GROUP: NodeGroupYear,
             NodeType.LEARNING_UNIT: NodeLearningUnitYear,
             NodeType.LEARNING_CLASS: NodeLearningClassYear
@@ -102,9 +100,9 @@ class NodeFactory:
             override_end_year_to: int = DO_NOT_OVERRIDE,
             override_start_year_to: int = DO_NOT_OVERRIDE
     ) -> 'Node':
-        new_code = GenerateNodeCode().generate_next_code_from_existing(
-            existing_code=duplicate_from.entity_id.code,
-            year=duplicate_from.entity_id.year,
+        new_code = GenerateNodeCode().generate_from_parent_node(
+            parent_node=duplicate_from,
+            child_node_type=duplicate_from.node_type,
         )
         start_year = duplicate_from.start_year if override_start_year_to == DO_NOT_OVERRIDE else override_start_year_to
         copied_node = attr.evolve(
@@ -191,7 +189,7 @@ class Node(interface.Entity):
         return self.type == NodeType.LEARNING_UNIT
 
     def is_group_or_mini_or_training(self):
-        return self.type == NodeType.GROUP or self.type == NodeType.EDUCATION_GROUP
+        return self.type == NodeType.GROUP
 
     def is_finality(self) -> bool:
         return self.node_type in set(TrainingType.finality_types_enum())
@@ -396,24 +394,6 @@ def _get_descendents(root_node: Node, current_path: 'Path' = None) -> Dict['Path
             **_get_descendents(link.child, current_path=child_path)
         })
     return _descendents
-
-
-# TODO: Remove this class because unused when migration is done.
-@attr.s(slots=True, hash=False)
-class NodeEducationGroupYear(Node):
-
-    type = NodeType.EDUCATION_GROUP
-
-    constraint_type = attr.ib(type=ConstraintTypes, default=None)
-    min_constraint = attr.ib(type=int, default=None)
-    max_constraint = attr.ib(type=int, default=None)
-    remark_fr = attr.ib(type=str, default=None)
-    remark_en = attr.ib(type=str, default=None)
-    offer_title_fr = attr.ib(type=str, default=None)
-    offer_title_en = attr.ib(type=str, default=None)
-    offer_partial_title_fr = attr.ib(type=str, default=None)
-    offer_partial_title_en = attr.ib(type=str, default=None)
-    category = attr.ib(type=Categories, default=None)
 
 
 @attr.s(slots=True, eq=False, hash=False)

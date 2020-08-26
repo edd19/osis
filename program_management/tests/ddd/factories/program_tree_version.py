@@ -25,7 +25,6 @@
 ##############################################################################
 import factory.fuzzy
 
-from program_management.ddd.domain.program_tree import ProgramTreeIdentity
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersion, ProgramTreeVersionIdentity
 from program_management.tests.ddd.factories.program_tree import ProgramTreeFactory
 
@@ -49,16 +48,15 @@ class ProgramTreeVersionFactory(factory.Factory):
         abstract = False
 
     tree = factory.SubFactory(ProgramTreeFactory)
-    entity_identity = factory.SubFactory(ProgramTreeVersionIdentityFactory)
-    program_tree_identity = ProgramTreeIdentity(code="CODE", year=2020)
+    program_tree_identity = factory.SelfAttribute("tree.entity_id")
     program_tree_repository = None
-    entity_id = ProgramTreeVersionIdentity(
-        offer_acronym="OFFER",
-        year=2020,
-        version_name="",
-        is_transition=False
+    entity_id = factory.SubFactory(
+        ProgramTreeVersionIdentityFactory,
+        offer_acronym=factory.SelfAttribute("..tree.root_node.title"),
+        year=factory.SelfAttribute("..tree.root_node.year")
     )
-    version_name = factory.Sequence(lambda n: 'Version%02d' % n)
+    entity_identity = factory.SelfAttribute("entity_id")
+    version_name = factory.SelfAttribute("entity_id.version_name")
     title_fr = factory.Sequence(lambda n: 'Title French %02d' % n)
     title_en = factory.Sequence(lambda n: 'Title English %02d' % n)
 
@@ -69,7 +67,6 @@ class ProgramTreeVersionFactory(factory.Factory):
 
         return ProgramTreeVersionFactory(
             tree=tree_standard,
-            entity_identity__year=current_year,
+            entity_id__year=current_year,
             program_tree_identity=tree_standard.entity_id,
         )
-
