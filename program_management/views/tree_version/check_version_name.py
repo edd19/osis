@@ -10,6 +10,7 @@ from education_group.templatetags.academic_year_display import display_as_academ
 from osis_common.decorators.ajax import ajax_required
 from program_management.ddd.command import GetLastExistingVersionNameCommand
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
+from program_management.ddd.repositories.program_tree_version import ProgramTreeVersionRepository
 from program_management.ddd.service.read import get_last_existing_version_service
 from program_management.models.education_group_version import EducationGroupVersion
 
@@ -53,11 +54,13 @@ def check_update_version_name(request, year, code, default_version_name):
     version_name_change = version_name != default_version_name
     valid = bool(re.match("^[A-Z]{0,15}$", request.GET['version_name'].upper()))
     if valid and not existing_version:
-        is_a_master = get_education_group_version(
-            default_version_name, code, year
-        ).root_group.education_group_type.name in TrainingType.root_master_2m_types()
+        program_tree_version = ProgramTreeVersionRepository().get(
+            __get_last_existing_version("", code)
+        )
+        program_tree = program_tree_version.get_tree()
+        is_a_master = program_tree.is_master_2m()
     return JsonResponse({
-        "existing_version_name": existing_version,
+        "existing_version_name": existing_version and version_name_change,
         "valid": valid,
         "version_name": request.GET['version_name'],
         "version_name_change": version_name_change,

@@ -24,7 +24,7 @@
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
 <div class="modal-content">
-    <form class="form" method="POST" id="SpecificVersionForm" data-validate-url="{% url 'check_update_version_name' node_identity.year node_identity.code form.version_name.value %}"
+    <form class="form" method="POST" id="SpecificVersionForm" data-validate-url="{% url 'check_update_version_name' training_identity.year training_identity.acronym form.version_name.value %}"
     action="{{ request.path }}">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>

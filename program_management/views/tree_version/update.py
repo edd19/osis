@@ -85,6 +85,7 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
         form = SpecificVersionForm(
             training_identity=self.training_identity,
             node_identity=self.node_identity,
+            program_tree_version=ProgramTreeVersionRepository.get(self.program_tree_version_identity),
             last_year=ProgramTreeVersionRepository.get_last(self.program_tree_version_identity).entity_identity.year
         )
         return render(request, self.template_name, self.get_context_data(form))
