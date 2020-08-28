@@ -31,8 +31,6 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import View
 
-from base.forms.education_group.version import SpecificVersionForm
-from base.models.enums.education_group_types import TrainingType
 from base.views.common import display_success_messages
 from base.views.mixins import AjaxTemplateMixin
 from education_group.ddd.domain.service.identity_search import TrainingIdentitySearch
@@ -42,6 +40,7 @@ from osis_role.contrib.views import AjaxPermissionRequiredMixin
 from program_management.ddd.domain.node import NodeIdentity
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
 from program_management.ddd.repositories.program_tree_version import ProgramTreeVersionRepository
+from program_management.forms.version import SpecificVersionForm
 from program_management.models.education_group_version import EducationGroupVersion
 
 
@@ -85,7 +84,7 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
     def get(self, request, *args, **kwargs):
         form = SpecificVersionForm(
             training_identity=self.training_identity,
-            program_tree_version=ProgramTreeVersionRepository.get(self.program_tree_version_identity),
+            node_identity=self.node_identity,
             last_year=ProgramTreeVersionRepository.get_last(self.program_tree_version_identity).entity_identity.year
         )
         return render(request, self.template_name, self.get_context_data(form))

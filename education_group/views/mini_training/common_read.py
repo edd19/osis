@@ -162,6 +162,7 @@ class MiniTrainingRead(PermissionRequiredMixin, ElementSelectedClipBoardMixin, T
             "update_mini_training_url": self.get_update_mini_training_url(),
             "delete_mini_training_url": self.get_delete_mini_training_url(),
             "create_version_url": self.get_create_version_url(),
+            "update_version_url": self.get_update_version_url(),
             "is_root_node": is_root_node,
         }
 
@@ -198,6 +199,16 @@ class MiniTrainingRead(PermissionRequiredMixin, ElementSelectedClipBoardMixin, T
         return reverse(
             'create_education_group_version',
             kwargs={'year': self.node_identity.year, 'code': self.node_identity.code}
+        ) + "?path={}".format(self.get_path())
+
+    def get_update_version_url(self):
+        return reverse(
+            'update_education_group_version',
+            kwargs={
+                'year': self.node_identity.year,
+                'code': self.node_identity.code,
+                'version_name': self.current_version.entity_identity.version_name
+            }
         ) + "?path={}".format(self.get_path())
 
     def get_tab_urls(self):

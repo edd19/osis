@@ -113,4 +113,7 @@ class CentralManager(EducationGroupTypeScopeRoleMixin, osis_role_models.EntityRo
             'base.add_programtreeversion':
             predicates.is_user_attached_to_management_entity &
             predicates.is_education_group_year_older_or_equals_than_limit_settings_year,
+            'base.can_edit_programtreeversion':
+                predicates.is_user_attached_to_management_entity &
+                predicates.is_education_group_year_older_or_equals_than_limit_settings_year,
         })
