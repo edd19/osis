@@ -37,8 +37,8 @@ def check_version_name(request, year, code):
 def __get_last_existing_version(version_name: str, offer_acronym: str) -> ProgramTreeVersionIdentity:
     return get_last_existing_version_service.get_last_existing_version_identity(
         GetLastExistingVersionNameCommand(
-            version_name=version_name,
-            offer_acronym=offer_acronym,
+            version_name=version_name.upper(),
+            offer_acronym=offer_acronym.upper(),
             is_transition=False,
         )
     )
