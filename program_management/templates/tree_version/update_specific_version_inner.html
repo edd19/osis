@@ -28,7 +28,7 @@
     action="{{ request.path }}">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">×</button>
-            <h4>{% trans 'Update specific version' %}</h4>
+            <h4>{% trans 'Update this version' %}</h4>
         </div>
         <div class="modal-body">
             {% csrf_token %}
@@ -56,8 +56,9 @@
                     {% trans "Cancel" %}
                 </button>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalConfirmation">
-                <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save 2m' %}
-            </button>
+                    <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save 2m' %}
+                </button>
+                {% include "./modal_modification_confirmation.html" %}
             </div>
         </div>
         <div id="default_footer" style="display: block">
@@ -76,12 +77,6 @@
                     {% trans "Cancel" %}
                 </button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button id="2m_button" style="display: none" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalConfirmation">
-                <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> {% trans 'Save 2m' %}
-            </button>
-            {% include "./modal_modification_confirmation.html" %}
         </div>
     </form>
 </div>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-27 17:38+0200\n"
+"POT-Creation-Date: 2020-08-28 19:22+0200\n"
 "PO-Revision-Date: 2019-04-15 08:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -145,9 +145,6 @@ msgstr ""
 "Ne peut pas attacher \"%(child)s\" car le nombre d'enfants de type(s) "
 "\"%(child_types)s\" pour \"%(parent)s\" a atteint la limite maximum."
 
-msgid "Cannot add any element to learning unit"
-msgstr "Interdit d'ajouter des éléments à une UE"
-
 #, python-format
 msgid "Cannot add any element to learning unit %(parent_node)s"
 msgstr "Interdit d'ajouter des éléments à  l'UE %(parent_node)s"
@@ -155,9 +152,6 @@ msgstr "Interdit d'ajouter des éléments à  l'UE %(parent_node)s"
 #, python-format
 msgid "Cannot attach a node %(node)s to himself."
 msgstr "Interdit d'attacher un élément %(node)s à lui-même."
-
-msgid "Cannot detach due to prerequisites."
-msgstr "Interdit de retirer à cause des prérequis."
 
 #, python-format
 msgid ""
@@ -184,9 +178,6 @@ msgstr ""
 
 msgid "Cannot perform detach action on root."
 msgstr "Interdit de retirer la racine."
-
-msgid "Cannot perform modification action on root."
-msgstr "Interdit de modifier la racine."
 
 msgid "Category"
 msgstr "Catégorie"
@@ -235,20 +226,6 @@ msgstr "Mode d'évaluation des acquis des étudiants"
 
 msgid "Export"
 msgstr "Exporter"
-
-#, python-format
-msgid ""
-"Finality \"%(acronym)s\" has an end date greater than %(root_acronym)s "
-"program."
-msgid_plural ""
-"Finalities \"%(acronym)s\" have an end date greater than %(root_acronym)s "
-"program."
-msgstr[0] ""
-"La finalité \"%(acronym)s\" a une date de fin plus grande que le programme "
-"%(root_acronym)s."
-msgstr[1] ""
-"Les finalités \"%(acronym)s\" ont une date de fin plus grande que le "
-"programme %(root_acronym)s."
 
 #, python-format
 msgid ""
@@ -432,17 +409,6 @@ msgstr[1] ""
 "présentes dans le programme %(finality_acronym)s."
 
 #, python-format
-msgid "Option \"%(acronym)s\" must be present in %(root_acronym)s program."
-msgid_plural ""
-"Options \"%(acronym)s\" must be present in %(root_acronym)s program."
-msgstr[0] ""
-"L'option \"%(acronym)s\" doit être présente dans le programme "
-"%(root_acronym)s."
-msgstr[1] ""
-"Les options \"%(acronym)s\" doivent être présentes dans le programme "
-"%(root_acronym)s."
-
-#, python-format
 msgid "Option \"%(code)s\" must be present in %(root_code)s program."
 msgid_plural "Options \"%(code)s\" must be present in %(root_code)s program."
 msgstr[0] ""
@@ -554,6 +520,14 @@ msgstr "Recherche"
 msgid "Session derogation"
 msgstr "Session dérogation"
 
+msgid ""
+"Specific version for education group year %(offer_acronym)s[%(acronym)s] "
+"(%(academic_year)s) successfully updated."
+msgstr ""
+"La version de la formation <a href='%(link)s'> "
+"%(offer_acronym)s[%(acronym)s] (%(academic_year)s) </a> a été mise à jour "
+"avec succés"
+
 #, python-format
 msgid ""
 "Specific version for education group year <a href='%(link)s'> "
@@ -628,6 +602,9 @@ msgstr ""
 "Le nombre d'enfants de type(s) \"%(child_types)s\" pour \"%(parent)s\" a "
 "atteint la limite maximum."
 
+msgid "The objectives attached to this 2M training will also be modified"
+msgstr ""
+
 #, python-format
 msgid "The parent must have at least one child of type(s) \"%(types)s\"."
 msgstr "Le parent doit au moins avoir un enfant de type(s) \"%(types)s\"."
@@ -651,9 +628,6 @@ msgstr ""
 
 msgid "The registration form is available at the Secretariat of"
 msgstr "Le formulaire d'inscription est disponible au Secrétariat de"
-
-msgid "The user is not allowed to change link data."
-msgstr "L'utilisateur n'a pas la permission de modifier le contenu d'un lien"
 
 msgid "Themes discussed"
 msgstr "Thèmes abordés"
@@ -698,8 +672,14 @@ msgstr "Enseignant·e·s"
 msgid "Type"
 msgstr "Type"
 
+msgid "Update this version"
+msgstr "Modifier cette version"
+
 msgid "Utilizations"
 msgstr "Utilisations"
+
+msgid "Validate"
+msgstr "Valider"
 
 msgid "Version"
 msgstr "Version"
@@ -728,18 +708,9 @@ msgstr ""
 "d'enseignement %(child_node)s"
 
 #, python-format
-msgid "You can not add a learning unit to a %(category)s of type %(type)s."
-msgstr ""
-"Vous ne pouvez pas ajouter une unité d'enseignement à un(e) %(category)s de "
-"type %(type)s."
-
-#, python-format
 msgid "You can not add the same child %(child_node)s several times."
 msgstr ""
 "Vous ne pouvez pas ajouter plusieurs fois le même enfant %(child_node)s."
-
-msgid "You can not add the same child several times."
-msgstr "Vous ne pouvez pas ajouter plusieurs fois le même enfant."
 
 #, python-format
 msgid ""
@@ -859,3 +830,52 @@ msgstr "Oui"
 
 msgid "yes,no"
 msgstr "oui,non"
+
+#, fuzzy
+#~| msgid "Save"
+#~ msgid "Save 2m"
+#~ msgstr "Enregistrer"
+
+#~ msgid "Cannot add any element to learning unit"
+#~ msgstr "Interdit d'ajouter des éléments à une UE"
+
+#~ msgid "Cannot detach due to prerequisites."
+#~ msgstr "Interdit de retirer à cause des prérequis."
+
+#~ msgid "Cannot perform modification action on root."
+#~ msgstr "Interdit de modifier la racine."
+
+#~ msgid ""
+#~ "Finality \"%(acronym)s\" has an end date greater than %(root_acronym)s "
+#~ "program."
+#~ msgid_plural ""
+#~ "Finalities \"%(acronym)s\" have an end date greater than %(root_acronym)s "
+#~ "program."
+#~ msgstr[0] ""
+#~ "La finalité \"%(acronym)s\" a une date de fin plus grande que le "
+#~ "programme %(root_acronym)s."
+#~ msgstr[1] ""
+#~ "Les finalités \"%(acronym)s\" ont une date de fin plus grande que le "
+#~ "programme %(root_acronym)s."
+
+#~ msgid "Option \"%(acronym)s\" must be present in %(root_acronym)s program."
+#~ msgid_plural ""
+#~ "Options \"%(acronym)s\" must be present in %(root_acronym)s program."
+#~ msgstr[0] ""
+#~ "L'option \"%(acronym)s\" doit être présente dans le programme "
+#~ "%(root_acronym)s."
+#~ msgstr[1] ""
+#~ "Les options \"%(acronym)s\" doivent être présentes dans le programme "
+#~ "%(root_acronym)s."
+
+#~ msgid "The user is not allowed to change link data."
+#~ msgstr ""
+#~ "L'utilisateur n'a pas la permission de modifier le contenu d'un lien"
+
+#~ msgid "You can not add a learning unit to a %(category)s of type %(type)s."
+#~ msgstr ""
+#~ "Vous ne pouvez pas ajouter une unité d'enseignement à un(e) %(category)s "
+#~ "de type %(type)s."
+
+#~ msgid "You can not add the same child several times."
+#~ msgstr "Vous ne pouvez pas ajouter plusieurs fois le même enfant."

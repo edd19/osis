@@ -208,7 +208,7 @@ class TrainingRead(PermissionRequiredMixin, ElementSelectedClipBoardMixin, Templ
             kwargs={
                 'year': self.node_identity.year,
                 'code': self.node_identity.code,
-                'version_name': self.current_version.entity_identity.version_name
+                'version_name': self.current_version.entity_identity.version_name or None
             }
         ) + "?path={}".format(self.get_path())
 

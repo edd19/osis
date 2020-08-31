@@ -37,9 +37,13 @@ from education_group.ddd.domain.service.identity_search import TrainingIdentityS
 from education_group.ddd.domain.training import TrainingIdentity
 from education_group.templatetags.academic_year_display import display_as_academic_year
 from osis_role.contrib.views import AjaxPermissionRequiredMixin
+from program_management.ddd.command import ExtendProgramTreeVersionCommand, UpdateProgramTreeVersionCommand, \
+    PostponeProgramTreeVersionCommand
 from program_management.ddd.domain.node import NodeIdentity
 from program_management.ddd.domain.program_tree_version import ProgramTreeVersionIdentity
 from program_management.ddd.repositories.program_tree_version import ProgramTreeVersionRepository
+from program_management.ddd.service.write import extend_existing_tree_version_service, \
+    update_program_tree_version_service, postpone_tree_version_service
 from program_management.forms.version import SpecificVersionForm
 from program_management.models.education_group_version import EducationGroupVersion
 
@@ -93,10 +97,22 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
     def post(self, request, *args, **kwargs):
         form = SpecificVersionForm(
             data=request.POST,
-            training_identity=self.training_identity
+            training_identity=self.training_identity,
+            node_identity=self.node_identity,
         )
         if form.is_valid():
-            pass
+            identities = extend_existing_tree_version_service.extend_existing_past_version(
+                _convert_form_to_extend_command(form)
+            )
+            update_program_tree_version_service.update_program_tree_version(
+                _convert_form_to_update_command(form)
+            )
+            postpone_tree_version_service.postpone_program_tree_version(
+                _convert_form_to_postpone_command(form, self.node_identity)
+            )
+
+            if not form.errors:
+                self._display_success_messages(identities)
         return render(request, self.template_name, self.get_context_data(form))
 
     def _call_rule(self, rule):
@@ -123,12 +139,49 @@ class UpdateProgramTreeVersion(AjaxPermissionRequiredMixin, AjaxTemplateMixin, V
         for created_identity in identities:
             success_messages.append(
                 _(
-                    "Specific version for education group year %(offer_acronym)s[%(acronym)s] (%(academic_year)s) "
+                    "Specific version for education group year %(offer_acronym)s[%(acronym)s]"
                     "successfully updated."
                 ) % {
                     "offer_acronym": created_identity.offer_acronym,
                     "acronym": created_identity.version_name,
-                    "academic_year": display_as_academic_year(created_identity.year)
                 }
             )
         display_success_messages(self.request, success_messages, extra_tags='safe')
+
+
+def _convert_form_to_extend_command(form: SpecificVersionForm) -> ExtendProgramTreeVersionCommand:
+    return ExtendProgramTreeVersionCommand(
+        end_year_of_existence=form.cleaned_data['end_year'],
+        offer_acronym=form.training_identity.acronym,
+        version_name=form.cleaned_data.get("version_name"),
+        year=form.training_identity.year,
+        is_transition=False,
+    )
+
+
+def _convert_form_to_update_command(
+        form: SpecificVersionForm,
+) -> UpdateProgramTreeVersionCommand:
+    return UpdateProgramTreeVersionCommand(
+        offer_acronym=form.training_identity.acronym,
+        version_name=form.cleaned_data.get("version_name"),
+        year=form.training_identity.year,
+        is_transition=False,
+        title_en=form.cleaned_data.get("title_english"),
+        title_fr=form.cleaned_data.get("title"),
+        end_year=form.cleaned_data.get("end_year"),
+    )
+
+
+def _convert_form_to_postpone_command(
+        form: SpecificVersionForm,
+        node_id: 'NodeIdentity'
+) -> PostponeProgramTreeVersionCommand:
+    return PostponeProgramTreeVersionCommand(
+        from_offer_acronym=form.training_identity.acronym,
+        from_version_name=form.cleaned_data.get("version_name"),
+        from_year=form.training_identity.year,
+        from_is_transition=False,
+        until_year=form.cleaned_data['end_year'],
+        from_code=node_id.code,
+    )

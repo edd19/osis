@@ -66,14 +66,3 @@ def check_update_version_name(request, year, code, default_version_name):
         "version_name_change": version_name_change,
         "is_a_master": is_a_master,
     }, safe=False)
-
-
-def get_education_group_version(version_name: str, code: str, year: int):
-    group_year = GroupYear.objects.get(
-        academic_year__year=year,        partial_acronym=code,
-    )
-    return EducationGroupVersion.objects.filter(
-        version_name=version_name.upper(),
-        root_group__acronym=group_year.acronym,
-        root_group__academic_year__year=year
-    ).first()
