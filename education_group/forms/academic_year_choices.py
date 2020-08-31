@@ -49,7 +49,7 @@ def get_academic_year_choices(
         (
             _get_href(
                 node_identity=node_id,
-                path='|'.join(str(map_element_id_by_year[elem_id][node_id.year]) for elem_id in element_ids),
+                path=_build_path(element_ids, map_element_id_by_year, node_id),
                 active_view_name=active_view_name,
             ),
             node_id.year
@@ -60,3 +60,11 @@ def get_academic_year_choices(
 
 def _get_href(node_identity: 'NodeIdentity', path: 'Path', active_view_name: str) -> str:
     return reverse(active_view_name, args=[node_identity.year, node_identity.code]) + "?path=%s" % path
+
+
+def _build_path(element_ids, map_element_id_by_year, node_id):
+    path = []
+    for elem_id in element_ids:
+        if map_element_id_by_year[elem_id].get(node_id.year):
+            path.append(str(map_element_id_by_year[elem_id][node_id.year]))
+    return '|'.join(path)
