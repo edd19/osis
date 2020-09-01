@@ -63,7 +63,6 @@ class SpecificVersionForm(forms.Form):
             training_identity: 'TrainingIdentity',
             node_identity: 'NodeIdentity',
             program_tree_version=None,
-            last_year=None,
             *args,
             **kwargs
     ):
@@ -72,7 +71,7 @@ class SpecificVersionForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.__init_academic_year_choices()
         if program_tree_version:
-            self.fields['end_year'].initial = last_year
+            self.fields['end_year'].initial = program_tree_version.end_year_of_existence
             self.fields['version_name'].initial = program_tree_version.version_name
             self.fields['title'].initial = program_tree_version.title_fr
             self.fields['title_english'].initial = program_tree_version.title_en
